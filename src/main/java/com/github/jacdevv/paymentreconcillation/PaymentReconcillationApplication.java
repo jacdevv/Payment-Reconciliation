@@ -1,4 +1,4 @@
-package org.example.paymentreconcillation;
+package com.github.jacdevv.paymentreconcillation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

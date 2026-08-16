@@ -8,11 +8,11 @@
         <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.example</groupId>
+    <groupId>com.github.jacdevv</groupId>
     <artifactId>PaymentReconcillation</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>PaymentReconcillation</name>
-    <description>PaymentReconcillation</description>
+    <description>Payment Reconciliation Service</description>
     <url/>
     <licenses>
         <license/>
