@@ -30,7 +30,7 @@ public class TransactionRecord {
     private TransactionStatus status;
 
     @CsvBindByName(column = "timestamp")
-    @CsvDate(value = "yyyy-MM-dd'T'HH:mm:ssX")
+    @CsvDate(value = "yyyy-MM-dd'T'HH:mm:ss[XXX][X]")
     private Instant timestamp;
 
     public TransactionRecord toRecord() {
