@@ -70,13 +70,16 @@ class CSVProcessorTest {
             String csv = """
                     transaction_id,reference,amount,currency,status,timestamp
                     TXN-001,REF-001,150.75,USD,SUCCESS,2026-08-16T12:00:00Z
-                    TXN-002,REF-002,3000.00,EUR,FAILED,2026-08-16T14:30:00+07
+                    TXN-002,REF-002,3000.00,EUR,FAILED,2026-08-16T14:30:00+07:00
                     TXN-003,REF-003,50.25,GBP,REFUNDED,2026-08-16T08:15:30Z
                     TXN-004,REF-004,10.00,USD,PENDING,2026-08-16T18:00:00Z
                     """;
             InputStream stream = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
-            List<TransactionRecord> records = processor.process(stream);
+            List<TransactionRecord> records;
+            try (var recordStream = processor.process(stream)) {
+                records = recordStream.toList();
+            }
 
             assertThat(records).hasSize(4);
 
@@ -92,6 +95,7 @@ class CSVProcessorTest {
             assertThat(second.getTransactionId()).isEqualTo("TXN-002");
             assertThat(second.getStatus()).isEqualTo(TransactionStatus.FAILED);
             assertThat(second.getCurrency()).isEqualTo("EUR");
+            assertThat(second.getTimestamp()).isEqualTo(Instant.parse("2026-08-16T07:30:00Z"));
 
             TransactionRecord third = records.get(2);
             assertThat(third.getStatus()).isEqualTo(TransactionStatus.REFUNDED);
@@ -105,9 +109,10 @@ class CSVProcessorTest {
             String csv = "transaction_id,reference,amount,currency,status,timestamp\n";
             InputStream stream = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
-            List<TransactionRecord> records = processor.process(stream);
-
-            assertThat(records).isEmpty();
+            try (var recordStream = processor.process(stream)) {
+                List<TransactionRecord> records = recordStream.toList();
+                assertThat(records).isEmpty();
+            }
         }
 
         @Test
@@ -118,8 +123,11 @@ class CSVProcessorTest {
                     """;
             InputStream stream = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
-            assertThatThrownBy(() -> processor.process(stream))
-                    .isInstanceOf(RuntimeException.class);
+            assertThatThrownBy(() -> {
+                try (var recordStream = processor.process(stream)) {
+                    recordStream.toList();
+                }
+            }).isInstanceOf(RuntimeException.class);
         }
 
         @Test
@@ -130,8 +138,11 @@ class CSVProcessorTest {
                     """;
             InputStream stream = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
-            assertThatThrownBy(() -> processor.process(stream))
-                    .isInstanceOf(RuntimeException.class);
+            assertThatThrownBy(() -> {
+                try (var recordStream = processor.process(stream)) {
+                    recordStream.toList();
+                }
+            }).isInstanceOf(RuntimeException.class);
         }
 
         @Test
@@ -142,8 +153,11 @@ class CSVProcessorTest {
                     """;
             InputStream stream = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
-            assertThatThrownBy(() -> processor.process(stream))
-                    .isInstanceOf(RuntimeException.class);
+            assertThatThrownBy(() -> {
+                try (var recordStream = processor.process(stream)) {
+                    recordStream.toList();
+                }
+            }).isInstanceOf(RuntimeException.class);
         }
     }
 }

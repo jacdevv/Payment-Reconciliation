@@ -28,36 +28,36 @@ class ReconciliationServiceTest {
     }
 
     @Test
-    @DisplayName("normalizeFields() should return empty list when given null")
-    void normalizeFields_shouldReturnEmptyListWhenInputIsNull() {
-        List<TransactionRecord> result = service.normalizeFields(null);
+    @DisplayName("normalize() should return empty list when given null")
+    void normalize_shouldReturnEmptyListWhenInputIsNull() {
+        List<TransactionRecord> result = service.normalize(null);
         assertThat(result).isNotNull().isEmpty();
     }
 
     @Test
-    @DisplayName("normalizeFields() should return empty list when given empty list")
-    void normalizeFields_shouldReturnEmptyListWhenInputIsEmpty() {
-        List<TransactionRecord> result = service.normalizeFields(List.of());
+    @DisplayName("normalize() should return empty list when given empty list")
+    void normalize_shouldReturnEmptyListWhenInputIsEmpty() {
+        List<TransactionRecord> result = service.normalize(List.of());
         assertThat(result).isNotNull().isEmpty();
     }
 
     @Test
-    @DisplayName("normalizeFields() should filter out null records in the list")
-    void normalizeFields_shouldFilterNullRecords() {
+    @DisplayName("normalize() should filter out null records in the list")
+    void normalize_shouldFilterNullRecords() {
         List<TransactionRecord> input = new ArrayList<>();
         input.add(null);
         input.add(new TransactionRecord("TXN-1", "REF-1", new BigDecimal("10.00"), "USD", TransactionStatus.SUCCESS, Instant.now()));
         input.add(null);
 
-        List<TransactionRecord> result = service.normalizeFields(input);
+        List<TransactionRecord> result = service.normalize(input);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getTransactionId()).isEqualTo("TXN-1");
     }
 
     @Test
-    @DisplayName("normalizeFields() should trim strings, uppercase currency, and normalize amount scale")
-    void normalizeFields_shouldNormalizeRecordFields() {
+    @DisplayName("normalize() should trim strings, uppercase currency, and normalize amount scale")
+    void normalize_shouldNormalizeRecordFields() {
         Instant timestamp = Instant.parse("2026-08-16T12:00:00Z");
         TransactionRecord unnormalized = new TransactionRecord(
                 "  TXN-001  ",
@@ -68,7 +68,7 @@ class ReconciliationServiceTest {
                 timestamp
         );
 
-        List<TransactionRecord> result = service.normalizeFields(List.of(unnormalized));
+        List<TransactionRecord> result = service.normalize(List.of(unnormalized));
 
         assertThat(result).hasSize(1);
         TransactionRecord normalized = result.get(0);
@@ -82,8 +82,8 @@ class ReconciliationServiceTest {
     }
 
     @Test
-    @DisplayName("normalizeFields() should handle null fields within a record gracefully")
-    void normalizeFields_shouldHandleNullFieldsInsideRecord() {
+    @DisplayName("normalize() should handle null fields within a record gracefully")
+    void normalize_shouldHandleNullFieldsInsideRecord() {
         TransactionRecord nullFieldsRecord = new TransactionRecord(
                 null,
                 null,
@@ -93,7 +93,7 @@ class ReconciliationServiceTest {
                 null
         );
 
-        List<TransactionRecord> result = service.normalizeFields(List.of(nullFieldsRecord));
+        List<TransactionRecord> result = service.normalize(List.of(nullFieldsRecord));
 
         assertThat(result).hasSize(1);
         TransactionRecord record = result.get(0);
